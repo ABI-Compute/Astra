@@ -3,11 +3,14 @@
 Welcome to Astra! An open source browser
 
 ## windows example
-<img width="998" height="782" alt="image" src="https://github.com/user-attachments/assets/bc9c8686-d38e-4bac-8706-f94df5ac2bec" />
-<img width="998" height="784" alt="image" src="https://github.com/user-attachments/assets/7f72e5da-d399-4e7a-9943-f67a969dcfec" />
+<img width="998" height="787" alt="image" src="https://github.com/user-attachments/assets/ecd45461-3b50-44e7-a715-884dc9a9f3b5" />
+
+<img width="998" height="789" alt="image" src="https://github.com/user-attachments/assets/94f4cdec-61f8-4d82-bc16-3b8d56dedd7b" />
+
 
 ## Ubuntu example
-<img width="810" height="634" alt="image" src="https://github.com/user-attachments/assets/b232994a-dcb5-4477-96c6-a1aeac8d885c" />
+<img width="809" height="630" alt="image" src="https://github.com/user-attachments/assets/b78b2dcf-1407-4151-b2ae-bf32e8cda598" />
+
 
 
 ## DETAILS
