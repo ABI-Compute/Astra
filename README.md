@@ -9,8 +9,7 @@ Welcome to Astra! An open source browser
 
 
 ## Ubuntu example
-<img width="809" height="630" alt="image" src="https://github.com/user-attachments/assets/b78b2dcf-1407-4151-b2ae-bf32e8cda598" />
-
+<img width="808" height="631" alt="image" src="https://github.com/user-attachments/assets/f7a5e3d2-fe35-4ffa-872a-055149641b82" />
 
 
 ## DETAILS
