@@ -8,6 +8,7 @@
 #include <cctype> 
 #include <map>
 #include <functional>
+#include <filesystem>
 
 #include <SDL.h>
 #include <SDL_main.h>
@@ -25,6 +26,19 @@ int gWindowHeight = 600;
 string SrcName;
 string infile;
 vector<int> executed_idxs;
+string os;
+
+void initOS() {
+    #if defined(_WIN32) || defined(_WIN64)
+        os = "Windows";
+    #elif defined(__linux__)
+        os = "Linux";
+    #elif defined(__APPLE__) && defined(__MACH__)
+        os = "macOS";
+    #else
+        cerr << "Unknown OS" << endl;
+    #endif
+}
 
 // --- Simple State Machine ---
 class State {
@@ -61,6 +75,7 @@ struct ContextMenu {
 
 // --- SDL Setup ---
 bool initSDL() {
+    initOS();
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
         cerr << "SDL Init Error: " << SDL_GetError() << endl;
         return false;
@@ -101,6 +116,8 @@ void cleanupSDL() {
 
 // --- Rendering helpers ---
 
+bool startsWith(const string& str, const string& prefix);
+
 void renderText(const string& text, int x, int y, const Style& style, int wrapWidth, int& outHeight) {
     TTF_Font* font = TTF_OpenFont(style.ttf_path.c_str(), style.fontSize);
     if (!font) {
@@ -128,11 +145,25 @@ void renderText(const string& text, int x, int y, const Style& style, int wrapWi
     TTF_CloseFont(font);
 }
 
+string trim(const string& str);
 
-void renderImage(const string& path, int x, int y) {
+void renderImage(string& path, int x, int y) {
+    path = trim(path);
+    cout << "Loading " << path << endl;
+    if (os == "Linux") {
+        if (startsWith(path, "C:") || startsWith(path, "c:")) {
+            cout << "Warning: Attempting to load Windows-style path on Linux. Adjusting path.\n";
+            string adjustedPath = path.substr(2);
+            if (adjustedPath[0] == '/' || adjustedPath[0] == '\\') adjustedPath = adjustedPath.substr(1);
+            path = adjustedPath;
+        } else {
+
+        }
+    }
     SDL_Surface* surface = IMG_Load(path.c_str());
     if (!surface) {
-        cerr << "Image Load Error (" << path << "): " << IMG_GetError() << endl;
+        cout << path << " Image Load Error: ";
+        cout << IMG_GetError() << endl;
         return;
     }
     SDL_Texture* texture = SDL_CreateTextureFromSurface(gRenderer, surface);
@@ -317,8 +348,8 @@ void exec(const vector<string>& lines, const unordered_map<string, Style>& style
 
 
         // --- Image handling ---
-        else if (line == ".img start") { state.push("img"); pendingImgSrc.clear(); pendingImgDesc.clear(); }
-        else if (line == ".img end") {
+        else if ((line == ".img start") || (trim(line) == ".img start")) { state.push("img"); pendingImgSrc.clear(); pendingImgDesc.clear(); }
+        else if ((line == ".img end") || (trim(line) == ".img end")) {
             if (!pendingImgSrc.empty()) { renderImage(pendingImgSrc, cursorX, cursorY); cursorY += 200; }
             if (!pendingImgDesc.empty()) {
                 Style style = {{0,0,0,255}, 18, "Arial.ttf"};
@@ -357,12 +388,10 @@ void exec(const vector<string>& lines, const unordered_map<string, Style>& style
                 string varName = trim(rest.substr(0, eqPos));
                 string varValue = trim(rest.substr(eqPos + 1));
                 variables[varName] = varValue;
-                cout << "Variable set: " << varName << " = " << varValue << endl;
             }
         }
         else if (startsWith(line, "prompt ") && first_time) {
             string rest = line.substr(7);
-            cout << "Prompt command: " << rest << endl;
             size_t spacePos = rest.find(' ');
             if (spacePos != string::npos) {
                 string varName = trim(rest.substr(0, spacePos));
@@ -370,10 +399,9 @@ void exec(const vector<string>& lines, const unordered_map<string, Style>& style
                 
                 string val = promptConsole(promptMsg);
                 variables[varName] = val;
-                cout << "Prompted for: " << varName << " with message: " << promptMsg << endl;
             }
         }
-        else if (line.rfind("src ", 0) == 0) pendingImgSrc = line.substr(4);
+        else if (line.rfind(".media ", 0) == 0) pendingImgSrc = line.substr(7);
 
         
         else if (line.rfind(".desc ", 0) == 0) pendingImgDesc = line.substr(6);
@@ -515,6 +543,7 @@ void renderDevConsole() {
 
 // --- Main ---
 int main(int argc, char* argv[]) {
+    cout << filesystem::current_path() << endl;
     cout << "Astra Render - SDL2 Renderer\n";
 
     if (argc != 2) {
