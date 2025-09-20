@@ -17,6 +17,8 @@ The Astra engine is still in **DEVELOPMENT** so it has some buggy and unstable f
 The releases section has pre built binaries **OR** you can clone this repo and on Windows execute build.bat to build both 
 To build it, you need SDL2, SDL_image and SDL_ttf installed on your system.
 
+Also, the image rendered in the screenshots is [PNG transparency demonstration 1.png](https://commons.wikimedia.org/wiki/File%3APNG_transparency_demonstration_1.png?utm_source=chatgpt.com) by Daniel G., Ed g2s & CyberShadow, via Wikimedia Commons. Licensed under CC BY-SA 3.0
+
 ## Features
 The Astra engine, while in very early stages of development has:
 - HTML, CSS and JS parsing capabilities
